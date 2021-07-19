@@ -27,13 +27,41 @@ namespace QuantConnect.DataSource
     /// Example custom data type
     /// </summary>
     [ProtoContract(SkipConstructor = true)]
-    public class MyCustomDataType : BaseData
+    public class QuiverQuantTwitterFollowers : BaseData
     {
         /// <summary>
-        /// Some custom data property
+        /// Number of followers of the company's Twitter page on the given date
         /// </summary>
-        [ProtoMember(2000)]
-        public string SomeCustomProperty { get; set; }
+        public int Followers { get; set; }
+
+        /// <summary>
+        /// Day-over-day change in company's follower count
+        /// </summary>
+        public decimal DayPercentChange { get; set; }
+
+        /// <summary>
+        /// Week-over-week change in company's follower count
+        /// </summary>
+        public decimal WeekPercentChange { get; set; }
+
+        /// <summary>
+        /// Month-over-month change in company's follower count
+        /// </summary>
+        public decimal MonthPercentChange { get; set; }
+
+        /// <summary>
+        /// Time passed between the date of the data and the time the data became available to us
+        /// </summary>
+        public TimeSpan Period { get; set; } = TimeSpan.FromDays(1);
+
+        /// <summary>
+        /// Time the data became available
+        /// </summary>
+        public override DateTime EndTime
+        {
+            get { return Time + Period; }
+            set { Time = value - Period; }
+        }
 
         /// <summary>
         /// Return the URL string source of the file. This will be converted to a stream
@@ -48,7 +76,8 @@ namespace QuantConnect.DataSource
                 Path.Combine(
                     Globals.DataFolder,
                     "alternative",
-                    "mycustomdatatype",
+                    "quiver",
+                    "twitter",
                     $"{config.Symbol.Value.ToLowerInvariant()}.csv"
                 ),
                 SubscriptionTransportMedium.LocalFile
@@ -68,12 +97,20 @@ namespace QuantConnect.DataSource
             var csv = line.Split(',');
 
             var parsedDate = Parse.DateTimeExact(csv[0], "yyyyMMdd");
-            return new MyCustomDataType
+            var followers = Parse.Int(csv[1]);
+            var percentChangeDay = Parse.Decimal(csv[2]);
+            var percentChangeWeek = Parse.Decimal(csv[3]);
+            var percentChangeMonth = Parse.Decimal(csv[4]);
+
+            return new QuiverQuantTwitterFollowers
             {
+                Followers = followers,
+                DayPercentChange = percentChangeDay,
+                WeekPercentChange = percentChangeWeek,
+                MonthPercentChange = percentChangeMonth,
+
                 Symbol = config.Symbol,
-                SomeCustomProperty = csv[1],
-                Time = parsedDate,
-                EndTime = parsedDate + TimeSpan.FromDays(1)
+                Time = parsedDate
             };
         }
 
@@ -83,12 +120,15 @@ namespace QuantConnect.DataSource
         /// <returns>A clone of the object</returns>
         public override BaseData Clone()
         {
-            return new MyCustomDataType
+            return new QuiverQuantTwitterFollowers
             {
+                Followers = Followers,
+                DayPercentChange = DayPercentChange,
+                WeekPercentChange = WeekPercentChange,
+                MonthPercentChange = MonthPercentChange,
+
                 Symbol = Symbol,
-                Time = Time,
-                EndTime = EndTime,
-                SomeCustomProperty = SomeCustomProperty,
+                Time = Time
             };
         }
 
@@ -116,7 +156,7 @@ namespace QuantConnect.DataSource
         /// </summary>
         public override string ToString()
         {
-            return $"{Symbol} - {SomeCustomProperty}";
+            return $"{Symbol} - Follower count: {Followers}";
         }
 
         /// <summary>
@@ -141,7 +181,7 @@ namespace QuantConnect.DataSource
         /// <returns>The <see cref="T:NodaTime.DateTimeZone" /> of this data type</returns>
         public override DateTimeZone DataTimeZone()
         {
-            return DateTimeZone.Utc;
+            return TimeZones.Chicago;
         }
     }
 }

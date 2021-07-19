@@ -3,7 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>QuantConnect.DataSource</RootNamespace>
-    <DocumentationFile>$(OutputPath)\QuantConnect.DataSource.xml</DocumentationFile>
+    <AssemblyName>QuantConnect.DataSource.QuiverQuantTwitterFollowers</AssemblyName>
+    <OutputPath>bin\$(Configuration)</OutputPath>
+    <DocumentationFile>$(OutputPath)\QuantConnect.DataSource.QuiverQuantTwitterFollowers.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
