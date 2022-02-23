@@ -20,9 +20,11 @@ using System.IO;
 using System.Linq;
 using ProtoBuf.Meta;
 using Newtonsoft.Json;
+using NodaTime;
 using NUnit.Framework;
 using QuantConnect.Data;
 using QuantConnect.DataSource;
+using QuantConnect.Data.Market;
 
 namespace QuantConnect.DataLibrary.Tests
 {
@@ -69,6 +71,15 @@ namespace QuantConnect.DataLibrary.Tests
             AssertAreEqual(expected, result);
         }
 
+        [Test]
+        public void ParseFloatNumber()
+        {
+            var instance = CreateNewInstance();
+            var symbol = Symbol.Create("SPY", SecurityType.Base, Market.USA);
+            var config = new SubscriptionDataConfig(typeof(TradeBar), symbol, Resolution.Daily, DateTimeZone.Utc, DateTimeZone.Utc, false, false, false); 
+            Assert.DoesNotThrow(() => instance.Reader(config, "20201104,1093260,9.14696e-05,-0.0254220704,-0.1202292029", DateTime.Today, false));
+        }
+
         private void AssertAreEqual(object expected, object result, bool filterByCustomAttributes = false)
         {
             foreach (var propertyInfo in expected.GetType().GetProperties())
@@ -89,6 +100,7 @@ namespace QuantConnect.DataLibrary.Tests
         {
             return new QuiverQuantTwitterFollowers
             {
+                Value = 1000,
                 Followers = 1000,
                 DayPercentChange = 5m,
                 WeekPercentChange = 100m,

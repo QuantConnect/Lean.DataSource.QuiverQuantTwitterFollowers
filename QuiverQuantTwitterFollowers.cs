@@ -15,11 +15,12 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using NodaTime;
 using ProtoBuf;
-using System.IO;
 using QuantConnect.Data;
-using System.Collections.Generic;
 
 namespace QuantConnect.DataSource
 {
@@ -57,11 +58,7 @@ namespace QuantConnect.DataSource
         /// <summary>
         /// Time the data became available
         /// </summary>
-        public override DateTime EndTime
-        {
-            get { return Time + Period; }
-            set { Time = value - Period; }
-        }
+        public override DateTime EndTime => Time + Period;
 
         /// <summary>
         /// Return the URL string source of the file. This will be converted to a stream
@@ -96,21 +93,18 @@ namespace QuantConnect.DataSource
         {
             var csv = line.Split(',');
 
-            var parsedDate = Parse.DateTimeExact(csv[0], "yyyyMMdd");
             var followers = Parse.Int(csv[1]);
-            var percentChangeDay = Parse.Decimal(csv[2]);
-            var percentChangeWeek = Parse.Decimal(csv[3]);
-            var percentChangeMonth = Parse.Decimal(csv[4]);
 
             return new QuiverQuantTwitterFollowers
             {
-                Followers = followers,
-                DayPercentChange = percentChangeDay,
-                WeekPercentChange = percentChangeWeek,
-                MonthPercentChange = percentChangeMonth,
-
                 Symbol = config.Symbol,
-                Time = parsedDate
+                Time = Parse.DateTimeExact(csv[0], "yyyyMMdd"),
+                Value = followers,
+ 
+                Followers = followers,
+                DayPercentChange = decimal.Parse(csv[2], NumberStyles.Any, CultureInfo.InvariantCulture),
+                WeekPercentChange = decimal.Parse(csv[3], NumberStyles.Any, CultureInfo.InvariantCulture),
+                MonthPercentChange = decimal.Parse(csv[4], NumberStyles.Any, CultureInfo.InvariantCulture)
             };
         }
 
@@ -122,13 +116,14 @@ namespace QuantConnect.DataSource
         {
             return new QuiverQuantTwitterFollowers
             {
+                Symbol = Symbol,
+                Time = Time,
+                Value = Followers,
+
                 Followers = Followers,
                 DayPercentChange = DayPercentChange,
                 WeekPercentChange = WeekPercentChange,
-                MonthPercentChange = MonthPercentChange,
-
-                Symbol = Symbol,
-                Time = Time
+                MonthPercentChange = MonthPercentChange
             };
         }
 
