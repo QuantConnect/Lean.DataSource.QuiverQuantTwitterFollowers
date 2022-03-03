@@ -16,6 +16,7 @@
 
 using System;
 using ProtoBuf;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ProtoBuf.Meta;
@@ -43,34 +44,14 @@ namespace QuantConnect.DataLibrary.Tests
         }
 
         [Test]
-        public void ProtobufRoundTrip()
-        {
-            var expected = CreateNewInstance();
-            var type = expected.GetType();
-
-            RuntimeTypeModel.Default[typeof(BaseData)].AddSubType(2000, type);
-
-            using (var stream = new MemoryStream())
-            {
-                Serializer.Serialize(stream, expected);
-
-                stream.Position = 0;
-
-                var result = Serializer.Deserialize(type, stream);
-
-                AssertAreEqual(expected, result, filterByCustomAttributes: true);
-            }
-        }
-
-        [Test]
         public void Selection()
         {
-            var datum = CreateNewInstance();
+            var datum = CreateNewSelection();
 
             var expected = from d in datum
                             where d.Followers > 1500 && d.DayPercentChange > 7m
                             select d.Symbol;
-            var result = new IEnumerable<Symbol> {Symbol.Create("AAPL", SecurityType.Equity, Market.USA)};
+            var result = new List<Symbol> {Symbol.Create("HWM", SecurityType.Equity, Market.USA)};
 
             AssertAreEqual(expected, result);
         }
@@ -91,11 +72,9 @@ namespace QuantConnect.DataLibrary.Tests
             }
         }
 
-        private IEnumerable<BaseData> CreateNewInstance()
+        private BaseData CreateNewInstance()
         {
-            return new IEnumerable<BaseData>
-            {
-                new QuiverQuantTwitterFollowers
+            return new QuiverQuantTwitterFollowersUniverse
                 {
                     Value = 1000,
                     Followers = 1000,
@@ -103,10 +82,27 @@ namespace QuantConnect.DataLibrary.Tests
                     WeekPercentChange = 100m,
                     MonthPercentChange = 10000m,
 
-                    Symbol = Symbol.Create("AAPL", SecurityType.Equity, Market.USA),
+                    Symbol = new Symbol(SecurityIdentifier.Parse("A RPTMYV3VC57P"), "A"),
+                    Time = DateTime.Today
+                };
+        }
+        
+        private IEnumerable<QuiverQuantTwitterFollowersUniverse> CreateNewSelection()
+        {
+            return new []
+            {
+                new QuiverQuantTwitterFollowersUniverse
+                {
+                    Value = 1000,
+                    Followers = 1000,
+                    DayPercentChange = 5m,
+                    WeekPercentChange = 100m,
+                    MonthPercentChange = 10000m,
+
+                    Symbol = new Symbol(SecurityIdentifier.Parse("A RPTMYV3VC57P"), "A"),
                     Time = DateTime.Today
                 },
-                new QuiverQuantTwitterFollowers
+                new QuiverQuantTwitterFollowersUniverse
                 {
                     Value = 1000,
                     Followers = 2000,
@@ -114,7 +110,7 @@ namespace QuantConnect.DataLibrary.Tests
                     WeekPercentChange = 100m,
                     MonthPercentChange = 10000m,
 
-                    Symbol = Symbol.Create("AAPL", SecurityType.Equity, Market.USA),
+                    Symbol = new Symbol(SecurityIdentifier.Parse("AA R735QTJ8XC9X"), "HWM"),
                     Time = DateTime.Today
                 }
             };

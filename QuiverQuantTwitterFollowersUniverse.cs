@@ -27,7 +27,6 @@ namespace QuantConnect.DataSource
     /// <summary>
     /// Universe Selection helper class for QuiverQuant Twitter Followers dataset
     /// </summary>
-    [ProtoContract(SkipConstructor = true)]
     public class QuiverQuantTwitterFollowersUniverse : BaseData
     {
         /// <summary>
@@ -56,9 +55,7 @@ namespace QuantConnect.DataSource
             get { return Time + QuantConnect.Time.OneDay; }
             set { Time = value - QuantConnect.Time.OneDay; }
         }
-
-        private int _count;
-        private DateTime _lastDate;
+        
         public override SubscriptionDataSource GetSource(SubscriptionDataConfig config, DateTime date, bool isLiveMode)
         {
             return new SubscriptionDataSource(
@@ -80,12 +77,12 @@ namespace QuantConnect.DataSource
 
             return new QuiverQuantTwitterFollowersUniverse
             {
-                Followers = Parse.Int(csv[1]),
-                DayPercentChange = Parse.Decimal(csv[2]),
-                WeekPercentChange = Parse.Decimal(csv[3]),
-                MonthPercentChange = Parse.Decimal(csv[4]),
+                Followers = Parse.Int(csv[2]),
+                DayPercentChange = decimal.Parse(csv[3], NumberStyles.Any, CultureInfo.InvariantCulture),
+                WeekPercentChange = decimal.Parse(csv[4], NumberStyles.Any, CultureInfo.InvariantCulture),
+                MonthPercentChange = decimal.Parse(csv[5], NumberStyles.Any, CultureInfo.InvariantCulture),
 
-                Symbol = QuantConnect.Symbol.Create(csv[0], SecurityType.Equity, Market.USA),
+                Symbol = new Symbol(SecurityIdentifier.Parse(csv[0]), csv[1]),
                 Time = date.AddDays(-1),
             };
         }
