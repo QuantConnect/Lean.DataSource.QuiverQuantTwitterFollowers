@@ -77,6 +77,8 @@ from QuantConnect.Algorithm.Framework.Alphas import *
 from QuantConnect.Algorithm.Framework.Execution import *
 from QuantConnect.Algorithm.Framework.Portfolio import *
 from QuantConnect.Algorithm.Framework.Selection import *
+from QuantConnect.Lean.Engine.DataFeeds import *
+
 
 try:
     import numpy as np
@@ -91,3 +93,8 @@ import json
 
 QCAlgorithmFramework = QCAlgorithm
 QCAlgorithmFrameworkBridge = QCAlgorithm
+
+mapFileProvider = LocalZipMapFileProvider()
+mapFileProvider.Initialize(DefaultDataProvider());
+def GenerateUSEquitySecurityIdentifier(ticker, date):
+    return SecurityIdentifier.GenerateEquity(ticker, Market.USA, True, mapFileProvider, date)
