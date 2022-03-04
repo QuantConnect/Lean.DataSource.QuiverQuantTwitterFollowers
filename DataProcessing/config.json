@@ -5,5 +5,8 @@
       "name": "Microsoft.NETCore.App",
       "version": "5.0.0"
     }
-  }
+  },
+  "data-directory": "Data",
+  "data-folder": "Data",
+  "cache-location": "Data"
 }
