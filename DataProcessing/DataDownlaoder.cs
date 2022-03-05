@@ -23,6 +23,7 @@ using QuantConnect.Logging;
 using QuantConnect.Orders;
 using QuantConnect.Util;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -53,6 +54,7 @@ namespace QuantConnect.DataProcessing
             '-',
             '_'
         };
+        private ConcurrentDictionary<string, ConcurrentQueue<string>> _tempData = new ConcurrentDictionary<string, ConcurrentQueue<string>>();
         
         private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {
@@ -171,19 +173,25 @@ namespace QuantConnect.DataProcessing
                                             $"{weekChange}",
                                             $"{monthChange}"));
                                         
-                                        
-                                        var universeCsvContents = new List<string>();
                                         var sid = SecurityIdentifier.GenerateEquity(ticker, Market.USA, true, mapFileProvider, dateTime);
 
-                                        universeCsvContents.Add(string.Join(",",
+                                        var universeCsvContents = string.Join(",",
                                             $"{sid}",
                                             $"{ticker}",
                                             $"{follower}",
                                             $"{dayChange}",
                                             $"{weekChange}",
-                                            $"{monthChange}"));
+                                            $"{monthChange}");
 
-                                        SaveContentToFile(_universeFolder, date, universeCsvContents);
+                                        ConcurrentQueue<string> tempList;
+
+                                        _tempData.GetOrAdd(date, new ConcurrentQueue<string>());
+                                        
+                                        if (_tempData.TryGetValue(date, out tempList))
+                                        {
+                                            tempList.Enqueue(universeCsvContents);
+                                        }
+                                        _tempData.TryUpdate(date, tempList, _tempData[date]);
                                     }
 
                                     if (csvContents.Count != 0)
@@ -202,9 +210,16 @@ namespace QuantConnect.DataProcessing
                             )
                     );
 
-                    if (tasks.Count == 1)
+                    if (tasks.Count == 10)
                     {
                         Task.WaitAll(tasks.ToArray());
+
+                        foreach (var kvp in _tempData)
+                        {
+                            SaveContentToFile(_universeFolder, kvp.Key, kvp.Value);
+                        }
+
+                        _tempData.Clear();
                         tasks.Clear();
                     }
                 }
@@ -212,6 +227,13 @@ namespace QuantConnect.DataProcessing
                 if (tasks.Count != 0)
                 {
                     Task.WaitAll(tasks.ToArray());
+                    
+                    foreach (var kvp in _tempData)
+                    {
+                        SaveContentToFile(_universeFolder, kvp.Key, kvp.Value);
+                    }
+
+                    _tempData.Clear();
                     tasks.Clear();
                 }
             }

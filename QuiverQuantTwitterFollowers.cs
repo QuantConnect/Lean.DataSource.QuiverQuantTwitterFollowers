@@ -13,15 +13,15 @@
  * limitations under the License.
  *
 */
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using Newtonsoft.Json;
 using NodaTime;
 using ProtoBuf;
 using QuantConnect.Data;
-
+using QuantConnect.Util;
 namespace QuantConnect.DataSource
 {
     /// <summary>
@@ -33,27 +33,45 @@ namespace QuantConnect.DataSource
         /// <summary>
         /// Number of followers of the company's Twitter page on the given date
         /// </summary>
+        [ProtoMember(12)]
+        [JsonProperty(PropertyName = "Followers")]
         public int Followers { get; set; }
 
         /// <summary>
         /// Day-over-day change in company's follower count
         /// </summary>
+        [ProtoMember(13)]
+        [JsonProperty(PropertyName = "pct_change_day")]
         public decimal DayPercentChange { get; set; }
 
         /// <summary>
         /// Week-over-week change in company's follower count
         /// </summary>
+        [ProtoMember(14)]
+        [JsonProperty(PropertyName = "pct_change_week")]
         public decimal WeekPercentChange { get; set; }
 
         /// <summary>
         /// Month-over-month change in company's follower count
         /// </summary>
+        [ProtoMember(15)]
+        [JsonProperty(PropertyName = "pct_change_month")]
         public decimal MonthPercentChange { get; set; }
 
         /// <summary>
         /// Time passed between the date of the data and the time the data became available to us
         /// </summary>
+        [ProtoMember(16)]
         public TimeSpan Period { get; set; } = TimeSpan.FromDays(1);
+
+        /// <summary>
+        /// Current time marker of this data packet.
+        /// </summary>
+        /// <remarks>All data is timeseries based.</remarks>
+        [ProtoMember(2)]
+        [JsonProperty(PropertyName = "Date")]
+        [JsonConverter(typeof(DateTimeJsonConverter), "yyyy-MM-dd")]
+        public new DateTime Time { get; set; }
 
         /// <summary>
         /// Time the data became available
@@ -92,7 +110,6 @@ namespace QuantConnect.DataSource
         public override BaseData Reader(SubscriptionDataConfig config, string line, DateTime date, bool isLiveMode)
         {
             var csv = line.Split(',');
-
             var followers = Parse.Int(csv[1]);
 
             return new QuiverQuantTwitterFollowers
@@ -119,7 +136,6 @@ namespace QuantConnect.DataSource
                 Symbol = Symbol,
                 Time = Time,
                 Value = Followers,
-
                 Followers = Followers,
                 DayPercentChange = DayPercentChange,
                 WeekPercentChange = WeekPercentChange,
@@ -169,7 +185,7 @@ namespace QuantConnect.DataSource
         {
             return DailyResolution;
         }
-
+        
         /// <summary>
         /// Specifies the data time zone for this data type. This is useful for custom data types
         /// </summary>
