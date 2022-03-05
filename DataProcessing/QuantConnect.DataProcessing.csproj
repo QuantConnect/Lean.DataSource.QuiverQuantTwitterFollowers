@@ -12,6 +12,9 @@
         <PackageReference Include="fasterflect" Version="3.0.0" />
     </ItemGroup>
     <ItemGroup>
+        <ProjectReference Include="..\QuantConnect.DataSource.csproj" />
+    </ItemGroup>
+    <ItemGroup>
         <None Remove="process.py" />
         <Content Include="process.py">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

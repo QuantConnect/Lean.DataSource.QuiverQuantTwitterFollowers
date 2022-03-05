@@ -153,18 +153,18 @@ namespace QuantConnect.DataProcessing
                                     }
 
                                     var twitterData =
-                                        JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(result,
+                                        JsonConvert.DeserializeObject<List<QuiverQuantTwitterFollowers>>(result,
                                             _jsonSerializerSettings);
                                     var csvContents = new List<string>();
 
                                     foreach (var twitterDataPoint in twitterData)
                                     {
-                                        var date = twitterDataPoint["Date"].Replace("-", string.Empty);
-                                        var dateTime = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
-                                        var follower = twitterDataPoint["Followers"];
-                                        var dayChange = twitterDataPoint["pct_change_day"];
-                                        var weekChange = twitterDataPoint["pct_change_week"];
-                                        var monthChange = twitterDataPoint["pct_change_month"];
+                                        var dateTime = twitterDataPoint.Time;
+                                        var date = dateTime.ToString("yyyyMMdd", DateTimeFormatInfo.InvariantInfo);
+                                        var follower = twitterDataPoint.Followers;
+                                        var dayChange = twitterDataPoint.DayPercentChange;
+                                        var weekChange = twitterDataPoint.WeekPercentChange;
+                                        var monthChange = twitterDataPoint.MonthPercentChange;
 
                                         csvContents.Add(string.Join(",",
                                             $"{date}",
