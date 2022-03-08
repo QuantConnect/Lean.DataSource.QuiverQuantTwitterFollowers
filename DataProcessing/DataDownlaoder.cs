@@ -81,6 +81,7 @@ namespace QuantConnect.DataProcessing
             _indexGate = new RateGate(10, TimeSpan.FromSeconds(1.1));
 
             Directory.CreateDirectory(_destinationFolder);
+            Directory.CreateDirectory(_universeFolder);
         }
 
         /// <summary>
@@ -160,28 +161,17 @@ namespace QuantConnect.DataProcessing
                                     foreach (var twitterDataPoint in twitterData)
                                     {
                                         var dateTime = twitterDataPoint.Time;
-                                        var date = dateTime.ToString("yyyyMMdd", DateTimeFormatInfo.InvariantInfo);
+                                        var date = $"{dateTime:yyyyMMdd}";
                                         var follower = twitterDataPoint.Followers;
                                         var dayChange = twitterDataPoint.DayPercentChange;
                                         var weekChange = twitterDataPoint.WeekPercentChange;
                                         var monthChange = twitterDataPoint.MonthPercentChange;
 
-                                        csvContents.Add(string.Join(",",
-                                            $"{date}",
-                                            $"{follower}",
-                                            $"{dayChange}",
-                                            $"{weekChange}",
-                                            $"{monthChange}"));
+                                        csvContents.Add($"{date},{follower},{dayChange},{weekChange},{monthChange}");
                                         
                                         var sid = SecurityIdentifier.GenerateEquity(ticker, Market.USA, true, mapFileProvider, dateTime);
 
-                                        var universeCsvContents = string.Join(",",
-                                            $"{sid}",
-                                            $"{ticker}",
-                                            $"{follower}",
-                                            $"{dayChange}",
-                                            $"{weekChange}",
-                                            $"{monthChange}");
+                                        var universeCsvContents = $"{sid},{ticker},{follower},{dayChange},{weekChange},{monthChange}";
 
                                         ConcurrentQueue<string> tempList;
 
@@ -330,7 +320,6 @@ namespace QuantConnect.DataProcessing
         private void SaveContentToFile(string destinationFolder, string name, IEnumerable<string> contents)
         {
             name = name.ToLowerInvariant();
-            Directory.CreateDirectory(destinationFolder);
             var bkPath = Path.Combine(destinationFolder, $"{name}-bk.csv");
             var finalPath = Path.Combine(destinationFolder, $"{name}.csv");
             var finalFileExists = File.Exists(finalPath);
