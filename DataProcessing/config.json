@@ -7,8 +7,6 @@
         }
     },
 
-    // We need to set the data folder to fetch the map files
-    // if we want to create Universe Selection files
     "data-folder": "../../../Data/",
 
     "quiver-auth-token": ""
