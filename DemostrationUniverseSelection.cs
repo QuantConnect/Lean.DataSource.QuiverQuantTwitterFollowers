@@ -50,7 +50,7 @@ namespace QuantConnect.Algorithm.CSharp
         
         public override void OnSecuritiesChanged(SecurityChanges changes)
         {
-        	Log(changes.ToString());
+            Log(changes.ToString());
         }
     }
 }

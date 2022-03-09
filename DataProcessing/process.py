@@ -40,13 +40,13 @@ class QuiverQuantTwitterFollowersDataDownloader:
 
         companies = sorted(self.HttpRequester("companies"), key=lambda x: x['Ticker'])
     
-        for c in companies:
-            ticker = c['Ticker']
+        for company in companies:
+            ticker = company['Ticker']
             filename = os.path.join(self.destinationFolder, f'{ticker.lower()}.csv')
             print(f'Processing ticker: {ticker}')
-            i = 5
+            trial = 5
 
-            while i != 0:
+            while trial != 0:
                 try:
                     ticker_twitter = self.HttpRequester(f"historical/{VendorDataName}/{ticker}")
                     time.sleep(0.03)
@@ -58,16 +58,16 @@ class QuiverQuantTwitterFollowersDataDownloader:
                     lines = []
 
                     for row in sorted(ticker_twitter, key=lambda x: x['Date']):
-                        dt = datetime.strptime(row['Date'], '%Y-%m-%d')
-                        date = dt.strftime('%Y%m%d') # 2020-05-08
+                        date_time = datetime.strptime(row['Date'], '%Y-%m-%d')
+                        date = date_time.strftime('%Y%m%d') # 2020-05-08
                         info = f"{row['Followers']},{row['pct_change_day']},{row['pct_change_week']},{row['pct_change_month']}"
 
                         lines.append(','.join([date, info]))
                 
                         if self.canCreateUniverseFiles:
-                            with open( os.path.join(self.universeFolder, f'{date.replace("-", "")}.csv'), 'a') as fp:
-                                sid = SecurityIdentifier.GenerateEquity(ticker, Market.USA, True, mapFileProvider, dt)                
-                                fp.write(f'{sid},{ticker},{info}\n')
+                            with open( os.path.join(self.universeFolder, f'{date.replace("-", "")}.csv'), 'a') as universe_file:
+                                sid = SecurityIdentifier.GenerateEquity(ticker, Market.USA, True, mapFileProvider, date_time)                
+                                universe_file.write(f'{sid},{ticker},{info}\n')
             
                     with open(filename, 'w') as ticker_file:
                         ticker_file.write('\n'.join(lines))
@@ -78,7 +78,7 @@ class QuiverQuantTwitterFollowersDataDownloader:
                 except Exception as e:
                     print(f'{e} - Failed to parse data for {ticker} - Retrying')
                     time.sleep(1)
-                    i = i - 1
+                    trial -= 1
 
     def HttpRequester(self, url):       
         base_url = 'https://api.quiverquant.com/beta'
