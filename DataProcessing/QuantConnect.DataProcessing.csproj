@@ -21,12 +21,6 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
-        <None Remove="AlgorithmImports.py" />
-        <Content Include="AlgorithmImports.py">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
-    <ItemGroup>
         <None Remove="config.json" />
         <Content Include="config.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
