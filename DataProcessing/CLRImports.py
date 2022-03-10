@@ -1,3 +1,6 @@
+# This file is used to import the environment and classes/methods of LEAN.
+# so that any python file could be using LEAN's classes/methods.
+
 from os import remove
 from json import dump
 from clr_loader import get_coreclr
