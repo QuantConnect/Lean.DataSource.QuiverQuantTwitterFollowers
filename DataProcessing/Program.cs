@@ -39,7 +39,7 @@ namespace QuantConnect.DataProcessing
                 "alternative",
                 "quiver");
 
-            QuiverQuantTwitterFollowersDataDownloader instance;
+            QuiverQuantTwitterFollowersDataDownloader instance = null;
             try
             {
                 // Pass in the values we got from the configuration into the downloader/converter.
@@ -48,7 +48,7 @@ namespace QuantConnect.DataProcessing
             catch (Exception err)
             {
                 Log.Error(err, $"QuantConnect.DataProcessing.Program.Main(): The downloader/converter for {QuiverQuantTwitterFollowersDataDownloader.VendorDataName} {QuiverQuantTwitterFollowersDataDownloader.VendorDataName} data failed to be constructed");
-                return;
+                Environment.Exit(1);
             }
 
             // No need to edit anything below here for most use cases.

@@ -185,7 +185,7 @@ namespace QuantConnect.DataSource
         {
             return DailyResolution;
         }
-        
+
         /// <summary>
         /// Specifies the data time zone for this data type. This is useful for custom data types
         /// </summary>

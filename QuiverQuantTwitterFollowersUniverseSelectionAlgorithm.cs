@@ -38,7 +38,7 @@ namespace QuantConnect.Algorithm.CSharp
             {
             	foreach (var datum in data)
             	{
-            		Log($"{datum.Symbol},{datum.Followers},{datum.DayPercentChange},{datum.WeekPercentChange}");
+                    Log($"{datum.Symbol},{datum.Followers},{datum.DayPercentChange},{datum.WeekPercentChange}");
             	}
             	
                 // define our selection criteria
