@@ -22,8 +22,10 @@
     <Compile Remove="DataProcessing\**" />
     <EmbeddedResource Remove="DataProcessing\**" />
     <None Remove="DataProcessing\**" />
-    <Compile Remove="Demonstration.cs" />
-    <Compile Remove="DemostrationUniverseSelection.cs" />
+    <Compile Remove="QuiverQuantTwitterFollowersAlgorithm.cs" />
+    <Compile Remove="QuiverQuantTwitterFollowersUniverseSelectionAlgorithm.cs" />
+    <None Remove="QuiverQuantTwitterFollowersAlgorithm.py" />
+    <None Remove="QuiverQuantTwitterFollowersUniverseSelectionAlgorithm.py" />
     <None Remove=".gitignore" />
   </ItemGroup>
 
