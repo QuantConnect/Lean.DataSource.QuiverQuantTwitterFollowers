@@ -177,7 +177,7 @@ namespace QuantConnect.DataProcessing
                                     if (newCompaniesCompleted % 100 == 0)
                                     {
                                         Log.Trace(
-                                            $"QuiverQuantTwitterFollowersDataDownloader.Run(): {newCompaniesCompleted.ToStringInvariant("P2")}/{count} complete");
+                                            $"QuiverQuantTwitterFollowersDataDownloader.Run(): {newCompaniesCompleted}/{count} complete");
                                     }
                                 }
                             )
@@ -277,7 +277,6 @@ namespace QuantConnect.DataProcessing
                         {
                             var finalRequestUri = response.RequestMessage.RequestUri; // contains the final location after following the redirect.
                             response = client.GetAsync(finalRequestUri).Result; // Reissue the request. The DefaultRequestHeaders configured on the client will be used, so we don't have to set them again.
-
                         }
 
                         response.EnsureSuccessStatusCode();
