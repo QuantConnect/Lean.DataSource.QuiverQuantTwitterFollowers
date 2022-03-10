@@ -15,7 +15,11 @@
         <ProjectReference Include="..\QuantConnect.DataSource.csproj" />
     </ItemGroup>
     <ItemGroup>
+        <None Remove="CLRImports.py" />
         <None Remove="process.py" />
+        <Content Include="CLRImports.py">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
         <Content Include="process.py">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>

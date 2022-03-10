@@ -4,18 +4,13 @@
 # 4. Output data for each ticker to /temp-output-directory/alternative/quiver/twitter/{symbol}.csv
 
 import os
-from clr_loader import get_coreclr
-from pythonnet import set_runtime
-set_runtime(get_coreclr(os.path.join(os.path.dirname(os.path.realpath(__file__)), "config.json")))
-
-from AlgorithmImports import *
-from QuantConnect.Lean.Engine.DataFeeds import *
-AddReference("Fasterflect")
-
 import pathlib
 import requests
 import shutil
 import time
+
+# CLRImports is required to handle Lean C# objects
+from CLRImports import *
 
 VendorName = "quiver";
 VendorDataName = "twitter";
