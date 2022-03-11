@@ -19,9 +19,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using NodaTime;
-using ProtoBuf;
-using QuantConnect;
 using QuantConnect.Data;
+
 namespace QuantConnect.DataSource
 {
     /// <summary>
@@ -49,10 +48,23 @@ namespace QuantConnect.DataSource
         /// </summary>
         public decimal MonthPercentChange { get; set; }
 
+        /// <summary>
+        /// Time passed between the date of the data and the time the data became available to us
+        /// </summary>
         public TimeSpan Period { get; set; } = TimeSpan.FromDays(1);
 
+        /// <summary>
+        /// Time the data became available
+        /// </summary>
         public override DateTime EndTime => Time + Period;
-        
+
+        /// <summary>
+        /// Return the URL string source of the file. This will be converted to a stream
+        /// </summary>
+        /// <param name="config">Configuration object</param>
+        /// <param name="date">Date of this source file</param>
+        /// <param name="isLiveMode">true if we're in live mode, false for backtesting mode</param>
+        /// <returns>String URL of source file.</returns>
         public override SubscriptionDataSource GetSource(SubscriptionDataConfig config, DateTime date, bool isLiveMode)
         {
             return new SubscriptionDataSource(
@@ -68,6 +80,14 @@ namespace QuantConnect.DataSource
             );
         }
 
+        /// <summary>
+        /// Parses the data from the line provided and loads it into LEAN
+        /// </summary>
+        /// <param name="config">Subscription configuration</param>
+        /// <param name="line">Line of data</param>
+        /// <param name="date">Date</param>
+        /// <param name="isLiveMode">Is live mode</param>
+        /// <returns>New instance</returns>
         public override BaseData Reader(SubscriptionDataConfig config, string line, DateTime date, bool isLiveMode)
         {
             var csv = line.Split(',');
@@ -84,6 +104,39 @@ namespace QuantConnect.DataSource
                 Time = date - Period,
                 Value = followers
             };
+        }
+
+        /// <summary>
+        /// Converts the instance to string
+        /// </summary>
+        public override string ToString()
+        {
+            return $"{Symbol} - Follower count: {Followers}";
+        }
+
+        /// <summary>
+        /// Gets the default resolution for this data and security type
+        /// </summary>
+        public override Resolution DefaultResolution()
+        {
+            return Resolution.Daily;
+        }
+
+        /// <summary>
+        /// Gets the supported resolution for this data and security type
+        /// </summary>
+        public override List<Resolution> SupportedResolutions()
+        {
+            return DailyResolution;
+        }
+
+        /// <summary>
+        /// Specifies the data time zone for this data type. This is useful for custom data types
+        /// </summary>
+        /// <returns>The <see cref="T:NodaTime.DateTimeZone" /> of this data type</returns>
+        public override DateTimeZone DataTimeZone()
+        {
+            return TimeZones.Chicago;
         }
     }
 }

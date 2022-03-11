@@ -13,6 +13,7 @@
  * limitations under the License.
  *
 */
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,6 +23,7 @@ using NodaTime;
 using ProtoBuf;
 using QuantConnect.Data;
 using QuantConnect.Util;
+
 namespace QuantConnect.DataSource
 {
     /// <summary>
