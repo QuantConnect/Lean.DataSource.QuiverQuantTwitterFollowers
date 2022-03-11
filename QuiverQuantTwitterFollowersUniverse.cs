@@ -1,4 +1,4 @@
-﻿/*
+/*
  * QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals.
  * Lean Algorithmic Trading Engine v2.0. Copyright 2014 QuantConnect Corporation.
  *
@@ -18,62 +18,40 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using Newtonsoft.Json;
 using NodaTime;
-using ProtoBuf;
 using QuantConnect.Data;
-using QuantConnect.Util;
 
 namespace QuantConnect.DataSource
 {
     /// <summary>
-    /// Example custom data type
+    /// Universe Selection helper class for QuiverQuant Twitter Followers dataset
     /// </summary>
-    [ProtoContract(SkipConstructor = true)]
-    public class QuiverQuantTwitterFollowers : BaseData
+    public class QuiverQuantTwitterFollowersUniverse : BaseData
     {
         /// <summary>
         /// Number of followers of the company's Twitter page on the given date
         /// </summary>
-        [ProtoMember(12)]
-        [JsonProperty(PropertyName = "Followers")]
         public int Followers { get; set; }
 
         /// <summary>
         /// Day-over-day change in company's follower count
         /// </summary>
-        [ProtoMember(13)]
-        [JsonProperty(PropertyName = "pct_change_day")]
         public decimal DayPercentChange { get; set; }
 
         /// <summary>
         /// Week-over-week change in company's follower count
         /// </summary>
-        [ProtoMember(14)]
-        [JsonProperty(PropertyName = "pct_change_week")]
         public decimal WeekPercentChange { get; set; }
 
         /// <summary>
         /// Month-over-month change in company's follower count
         /// </summary>
-        [ProtoMember(15)]
-        [JsonProperty(PropertyName = "pct_change_month")]
         public decimal MonthPercentChange { get; set; }
 
         /// <summary>
         /// Time passed between the date of the data and the time the data became available to us
         /// </summary>
-        [ProtoMember(16)]
         public TimeSpan Period { get; set; } = TimeSpan.FromDays(1);
-
-        /// <summary>
-        /// Current time marker of this data packet.
-        /// </summary>
-        /// <remarks>All data is timeseries based.</remarks>
-        [ProtoMember(2)]
-        [JsonProperty(PropertyName = "Date")]
-        [JsonConverter(typeof(DateTimeJsonConverter), "yyyy-MM-dd")]
-        public new DateTime Time { get; set; }
 
         /// <summary>
         /// Time the data became available
@@ -95,7 +73,8 @@ namespace QuantConnect.DataSource
                     "alternative",
                     "quiver",
                     "twitter",
-                    $"{config.Symbol.Value.ToLowerInvariant()}.csv"
+                    "universe",
+                    $"{date.ToStringInvariant(DateFormat.EightCharacter)}.csv"
                 ),
                 SubscriptionTransportMedium.LocalFile
             );
@@ -112,56 +91,19 @@ namespace QuantConnect.DataSource
         public override BaseData Reader(SubscriptionDataConfig config, string line, DateTime date, bool isLiveMode)
         {
             var csv = line.Split(',');
-            var followers = Parse.Int(csv[1]);
+            var followers = Parse.Int(csv[2]);
 
-            return new QuiverQuantTwitterFollowers
+            return new QuiverQuantTwitterFollowersUniverse
             {
-                Symbol = config.Symbol,
-                Time = Parse.DateTimeExact(csv[0], "yyyyMMdd"),
-                Value = followers,
- 
                 Followers = followers,
-                DayPercentChange = decimal.Parse(csv[2], NumberStyles.Any, CultureInfo.InvariantCulture),
-                WeekPercentChange = decimal.Parse(csv[3], NumberStyles.Any, CultureInfo.InvariantCulture),
-                MonthPercentChange = decimal.Parse(csv[4], NumberStyles.Any, CultureInfo.InvariantCulture)
+                DayPercentChange = decimal.Parse(csv[3], NumberStyles.Any, CultureInfo.InvariantCulture),
+                WeekPercentChange = decimal.Parse(csv[4], NumberStyles.Any, CultureInfo.InvariantCulture),
+                MonthPercentChange = decimal.Parse(csv[5], NumberStyles.Any, CultureInfo.InvariantCulture),
+
+                Symbol = new Symbol(SecurityIdentifier.Parse(csv[0]), csv[1]),
+                Time = date - Period,
+                Value = followers
             };
-        }
-
-        /// <summary>
-        /// Clones the data
-        /// </summary>
-        /// <returns>A clone of the object</returns>
-        public override BaseData Clone()
-        {
-            return new QuiverQuantTwitterFollowers
-            {
-                Symbol = Symbol,
-                Time = Time,
-                Value = Followers,
-                Followers = Followers,
-                DayPercentChange = DayPercentChange,
-                WeekPercentChange = WeekPercentChange,
-                MonthPercentChange = MonthPercentChange
-            };
-        }
-
-        /// <summary>
-        /// Indicates whether the data source is tied to an underlying symbol and requires that corporate events be applied to it as well, such as renames and delistings
-        /// </summary>
-        /// <returns>false</returns>
-        public override bool RequiresMapping()
-        {
-            return true;
-        }
-
-        /// <summary>
-        /// Indicates whether the data is sparse.
-        /// If true, we disable logging for missing files
-        /// </summary>
-        /// <returns>true</returns>
-        public override bool IsSparseData()
-        {
-            return true;
         }
 
         /// <summary>
