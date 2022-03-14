@@ -44,7 +44,7 @@ class QuiverQuantTwitterFollowersDataDownloader:
             while trial != 0:
                 try:
                     ticker_twitter = self.HttpRequester(f"historical/{VendorDataName}/{ticker}")
-                    sleep(0.03)
+                    sleep(0.15)
 
                     if len(ticker_twitter) == 0:
                         print(f'No data for: {ticker}')
