@@ -7,7 +7,7 @@ import os
 import pathlib
 import requests
 import shutil
-import time
+from time import sleep
 
 # CLRImports is required to handle Lean C# objects
 from CLRImports import *
@@ -44,7 +44,7 @@ class QuiverQuantTwitterFollowersDataDownloader:
             while trial != 0:
                 try:
                     ticker_twitter = self.HttpRequester(f"historical/{VendorDataName}/{ticker}")
-                    time.sleep(0.03)
+                    sleep(0.03)
 
                     if len(ticker_twitter) == 0:
                         print(f'No data for: {ticker}')
@@ -72,7 +72,7 @@ class QuiverQuantTwitterFollowersDataDownloader:
 
                 except Exception as e:
                     print(f'{e} - Failed to parse data for {ticker} - Retrying')
-                    time.sleep(1)
+                    sleep(1)
                     trial -= 1
 
     def HttpRequester(self, url):       
