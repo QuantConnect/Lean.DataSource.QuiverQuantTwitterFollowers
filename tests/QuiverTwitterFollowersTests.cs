@@ -29,7 +29,7 @@ using QuantConnect.Data.Market;
 namespace QuantConnect.DataLibrary.Tests
 {
     [TestFixture]
-    public class QuiverQuantTwitterFollowersTests
+    public class QuiverTwitterFollowersTests
     {
         [Test]
         public void JsonRoundTrip()
@@ -98,7 +98,7 @@ namespace QuantConnect.DataLibrary.Tests
 
         private BaseData CreateNewInstance()
         {
-            return new QuiverQuantTwitterFollowers
+            return new QuiverTwitterFollowers
             {
                 Value = 1000,
                 Followers = 1000,

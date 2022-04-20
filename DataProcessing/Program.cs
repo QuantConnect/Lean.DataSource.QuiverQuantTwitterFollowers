@@ -39,15 +39,15 @@ namespace QuantConnect.DataProcessing
                 "alternative",
                 "quiver");
 
-            QuiverQuantTwitterFollowersDataDownloader instance = null;
+            QuiverTwitterFollowersDataDownloader instance = null;
             try
             {
                 // Pass in the values we got from the configuration into the downloader/converter.
-                instance = new QuiverQuantTwitterFollowersDataDownloader(destinationDirectory);
+                instance = new QuiverTwitterFollowersDataDownloader(destinationDirectory);
             }
             catch (Exception err)
             {
-                Log.Error(err, $"QuantConnect.DataProcessing.Program.Main(): The downloader/converter for {QuiverQuantTwitterFollowersDataDownloader.VendorDataName} {QuiverQuantTwitterFollowersDataDownloader.VendorDataName} data failed to be constructed");
+                Log.Error(err, $"QuantConnect.DataProcessing.Program.Main(): The downloader/converter for {QuiverTwitterFollowersDataDownloader.VendorDataName} {QuiverTwitterFollowersDataDownloader.VendorDataName} data failed to be constructed");
                 Environment.Exit(1);
             }
 
@@ -59,13 +59,13 @@ namespace QuantConnect.DataProcessing
                 var success = instance.Run();
                 if (!success)
                 {
-                    Log.Error($"QuantConnect.DataProcessing.Program.Main(): Failed to download/process {QuiverQuantTwitterFollowersDataDownloader.VendorName} {QuiverQuantTwitterFollowersDataDownloader.VendorDataName} data");
+                    Log.Error($"QuantConnect.DataProcessing.Program.Main(): Failed to download/process {QuiverTwitterFollowersDataDownloader.VendorName} {QuiverTwitterFollowersDataDownloader.VendorDataName} data");
                     Environment.Exit(1);
                 }
             }
             catch (Exception err)
             {
-                Log.Error(err, $"QuantConnect.DataProcessing.Program.Main(): The downloader/converter for {QuiverQuantTwitterFollowersDataDownloader.VendorDataName} {QuiverQuantTwitterFollowersDataDownloader.VendorDataName} data exited unexpectedly");
+                Log.Error(err, $"QuantConnect.DataProcessing.Program.Main(): The downloader/converter for {QuiverTwitterFollowersDataDownloader.VendorDataName} {QuiverTwitterFollowersDataDownloader.VendorDataName} data exited unexpectedly");
                 Environment.Exit(1);
             }
             finally
