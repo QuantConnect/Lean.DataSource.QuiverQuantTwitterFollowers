@@ -23,7 +23,7 @@ class QuiverQuantTwitterFollowerUniverseAlgorithm(QCAlgorithm):
         self.SetCash(100000)
 
         # add a custom universe data source (defaults to usa-equity)
-        self.AddUniverse(QuiverQuantTwitterFollowersUniverse, "QuiverQuantTwitterFollowersUniverse", Resolution.Daily, self.UniverseSelection)
+        self.AddUniverse(QuiverTwitterFollowersUniverse, "QuiverTwitterFollowersUniverse", Resolution.Daily, self.UniverseSelection)
         
     def UniverseSelection(self, data):
         for datum in data:

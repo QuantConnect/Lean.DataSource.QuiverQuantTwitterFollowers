@@ -15,7 +15,7 @@ from CLRImports import *
 VendorName = "quiver";
 VendorDataName = "twitter";
 
-class QuiverQuantTwitterFollowersDataDownloader:
+class QuiverTwitterFollowersDataDownloader:
     def __init__(self, destinationFolder, canCreateUniverseFiles, apiKey = None):
         self.destinationFolder = os.path.join(destinationFolder, VendorDataName)
         self.universeFolder = os.path.join(self.destinationFolder, "universe")
@@ -87,5 +87,5 @@ if __name__ == "__main__":
     canCreateUniverseFiles = os.path.isdir(os.path.join(dataFolder, 'equity','usa','map_files'))
 
     destinationDirectory = os.path.join(Config.Get("temp-output-directory", "/temp-output-directory"), "alternative", f"{VendorName}")
-    instance = QuiverQuantTwitterFollowersDataDownloader(destinationDirectory, canCreateUniverseFiles);
+    instance = QuiverTwitterFollowersDataDownloader(destinationDirectory, canCreateUniverseFiles);
     instance.Run()

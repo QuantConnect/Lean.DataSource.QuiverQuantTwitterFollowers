@@ -30,7 +30,7 @@ using QuantConnect.Data.Market;
 namespace QuantConnect.DataLibrary.Tests
 {
     [TestFixture]
-    public class QuiverQuantTwitterFollowersUniverseTests
+    public class QuiverTwitterFollowersUniverseTests
     {
         [Test]
         public void JsonRoundTrip()
@@ -74,7 +74,7 @@ namespace QuantConnect.DataLibrary.Tests
 
         private BaseData CreateNewInstance()
         {
-            return new QuiverQuantTwitterFollowersUniverse
+            return new QuiverTwitterFollowersUniverse
                 {
                     Value = 1000,
                     Followers = 1000,
@@ -87,11 +87,11 @@ namespace QuantConnect.DataLibrary.Tests
                 };
         }
         
-        private IEnumerable<QuiverQuantTwitterFollowersUniverse> CreateNewSelection()
+        private IEnumerable<QuiverTwitterFollowersUniverse> CreateNewSelection()
         {
             return new []
             {
-                new QuiverQuantTwitterFollowersUniverse
+                new QuiverTwitterFollowersUniverse
                 {
                     Value = 1000,
                     Followers = 1000,
@@ -102,7 +102,7 @@ namespace QuantConnect.DataLibrary.Tests
                     Symbol = new Symbol(SecurityIdentifier.Parse("A RPTMYV3VC57P"), "A"),
                     Time = DateTime.Today
                 },
-                new QuiverQuantTwitterFollowersUniverse
+                new QuiverTwitterFollowersUniverse
                 {
                     Value = 1000,
                     Followers = 2000,

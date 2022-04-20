@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>QuantConnect.DataSource</RootNamespace>
-    <AssemblyName>QuantConnect.DataSource.QuiverQuantTwitterFollowers</AssemblyName>
+    <AssemblyName>QuantConnect.DataSource.QuiverTwitterFollowers</AssemblyName>
     <OutputPath>bin\$(Configuration)</OutputPath>
-    <DocumentationFile>$(OutputPath)\QuantConnect.DataSource.QuiverQuantTwitterFollowers.xml</DocumentationFile>
+    <DocumentationFile>$(OutputPath)\QuantConnect.DataSource.QuiverTwitterFollowers.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,10 +21,12 @@
     <Compile Remove="DataProcessing\**" />
     <EmbeddedResource Remove="DataProcessing\**" />
     <None Remove="DataProcessing\**" />
-    <Compile Remove="QuiverQuantTwitterFollowersAlgorithm.cs" />
-    <Compile Remove="QuiverQuantTwitterFollowersUniverseSelectionAlgorithm.cs" />
-    <None Remove="QuiverQuantTwitterFollowersAlgorithm.py" />
-    <None Remove="QuiverQuantTwitterFollowersUniverseSelectionAlgorithm.py" />
+    <Compile Remove="QuiverQuantTwitterFollowers.cs" />
+    <Compile Remove="QuiverQuantTwitterFollowersUniverse.cs" />
+    <Compile Remove="QuiverTwitterFollowersAlgorithm.cs" />
+    <Compile Remove="QuiverTwitterFollowersUniverseSelectionAlgorithm.cs" />
+    <None Remove="QuiverTwitterFollowersAlgorithm.py" />
+    <None Remove="QuiverTwitterFollowersUniverseSelectionAlgorithm.py" />
     <None Remove=".gitignore" />
   </ItemGroup>
 

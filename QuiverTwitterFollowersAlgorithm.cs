@@ -25,7 +25,7 @@ namespace QuantConnect.DataLibrary.Tests
     /// <summary>
     /// Quiver Quant Twitter followers algorithm using the custom data type as a source of alpha
     /// </summary>
-    public class QuiverQuantTwitterFollowersAlgorithm : QCAlgorithm
+    public class QuiverTwitterFollowersAlgorithm : QCAlgorithm
     {
         private Symbol _customDataSymbol;
         private Symbol _equitySymbol;
@@ -38,7 +38,7 @@ namespace QuantConnect.DataLibrary.Tests
             SetStartDate(2020, 10, 07);  //Set Start Date
             SetEndDate(2020, 10, 11);    //Set End Date
             _equitySymbol = AddEquity("AAPL", Resolution.Daily).Symbol;
-            _customDataSymbol = AddData<QuiverQuantTwitterFollowers>(_equitySymbol).Symbol;
+            _customDataSymbol = AddData<QuiverTwitterFollowers>(_equitySymbol).Symbol;
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace QuantConnect.DataLibrary.Tests
         /// <param name="slice">Slice object keyed by symbol containing the stock data</param>
         public override void OnData(Slice slice)
         {
-            var data = slice.Get<QuiverQuantTwitterFollowers>();
+            var data = slice.Get<QuiverTwitterFollowers>();
             if (!data.IsNullOrEmpty())
             {
                 var twitterFollowers = data[_customDataSymbol];

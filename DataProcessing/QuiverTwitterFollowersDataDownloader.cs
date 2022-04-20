@@ -36,9 +36,9 @@ using QuantConnect.Util;
 namespace QuantConnect.DataProcessing
 {
     /// <summary>
-    /// QuiverQuantTwitterFollowersDataDownloader implementation. https://www.quiverquant.com/
+    /// QuiverTwitterFollowersDataDownloader implementation. https://www.quiverquant.com/
     /// </summary>
-    public class QuiverQuantTwitterFollowersDataDownloader : IDisposable
+    public class QuiverTwitterFollowersDataDownloader : IDisposable
     {
         public const string VendorName = "quiver";
         public const string VendorDataName = "twitter";
@@ -67,11 +67,11 @@ namespace QuantConnect.DataProcessing
         private readonly RateGate _indexGate;
 
         /// <summary>
-        /// Creates a new instance of <see cref="QuiverQuantTwitterFollowers"/>
+        /// Creates a new instance of <see cref="QuiverTwitterFollowers"/>
         /// </summary>
         /// <param name="destinationFolder">The folder where the data will be saved</param>
         /// <param name="apiKey">The QuiverQuant API key</param>
-        public QuiverQuantTwitterFollowersDataDownloader(string destinationFolder, string apiKey = null)
+        public QuiverTwitterFollowersDataDownloader(string destinationFolder, string apiKey = null)
         {
             _destinationFolder = Path.Combine(destinationFolder, VendorDataName);
             _universeFolder = Path.Combine(_destinationFolder, "universe");
@@ -104,7 +104,7 @@ namespace QuantConnect.DataProcessing
                 var companiesCompleted = 0;
 
                 Log.Trace(
-                    $"QuiverQuantTwitterFollowersDataDownloader.Run(): Start processing {count.ToStringInvariant()} companies");
+                    $"QuiverTwitterFollowersDataDownloader.Run(): Start processing {count.ToStringInvariant()} companies");
 
                 var tasks = new List<Task>();
 
@@ -115,12 +115,12 @@ namespace QuantConnect.DataProcessing
                     if (!TryNormalizeDefunctTicker(quiverTicker, out var ticker))
                     {
                         Log.Error(
-                            $"QuiverQuantTwitterFollowersDataDownloader(): Defunct ticker {quiverTicker} is unable to be parsed. Continuing...");
+                            $"QuiverTwitterFollowersDataDownloader(): Defunct ticker {quiverTicker} is unable to be parsed. Continuing...");
                         continue;
                     }
 
                     // Begin processing ticker with a normalized value
-                    Log.Trace($"QuiverQuantTwitterFollowersDataDownloader.Run(): Processing {ticker}");
+                    Log.Trace($"QuiverTwitterFollowersDataDownloader.Run(): Processing {ticker}");
 
                     tasks.Add(
                         HttpRequester($"historical/{VendorDataName}/{ticker}")
@@ -130,7 +130,7 @@ namespace QuantConnect.DataProcessing
                                     if (y.IsFaulted)
                                     {
                                         Log.Error(
-                                            $"QuiverQuantTwitterFollowersDataDownloader.Run(): Failed to get data for {company}");
+                                            $"QuiverTwitterFollowersDataDownloader.Run(): Failed to get data for {company}");
                                         return;
                                     }
 
@@ -142,7 +142,7 @@ namespace QuantConnect.DataProcessing
                                     }
 
                                     var twitterData =
-                                        JsonConvert.DeserializeObject<List<QuiverQuantTwitterFollowers>>(result,
+                                        JsonConvert.DeserializeObject<List<QuiverTwitterFollowers>>(result,
                                             _jsonSerializerSettings);
                                     var csvContents = new List<string>();
 
@@ -177,7 +177,7 @@ namespace QuantConnect.DataProcessing
                                     if (newCompaniesCompleted % 100 == 0)
                                     {
                                         Log.Trace(
-                                            $"QuiverQuantTwitterFollowersDataDownloader.Run(): {newCompaniesCompleted}/{count} complete");
+                                            $"QuiverTwitterFollowersDataDownloader.Run(): {newCompaniesCompleted}/{count} complete");
                                     }
                                 }
                             )
@@ -216,7 +216,7 @@ namespace QuantConnect.DataProcessing
                 return false;
             }
 
-            Log.Trace($"QuiverQuantTwitterFollowersDataDownloader.Run(): Finished in {stopwatch.Elapsed.ToStringInvariant(null)}");
+            Log.Trace($"QuiverTwitterFollowersDataDownloader.Run(): Finished in {stopwatch.Elapsed.ToStringInvariant(null)}");
             return true;
         }
 
@@ -268,7 +268,7 @@ namespace QuantConnect.DataProcessing
                         var response = await client.GetAsync(Uri.EscapeUriString(url));
                         if (response.StatusCode == HttpStatusCode.NotFound)
                         {
-                            Log.Error($"QuiverQuantTwitterFollowersDataDownloader.HttpRequester(): Files not found at url: {Uri.EscapeUriString(url)}");
+                            Log.Error($"QuiverTwitterFollowersDataDownloader.HttpRequester(): Files not found at url: {Uri.EscapeUriString(url)}");
                             response.DisposeSafely();
                             return string.Empty;
                         }
@@ -289,7 +289,7 @@ namespace QuantConnect.DataProcessing
                 }
                 catch (Exception e)
                 {
-                    Log.Error(e, $"QuiverQuantTwitterFollowersDataDownloader.HttpRequester(): Error at HttpRequester. (retry {retries}/{_maxRetries})");
+                    Log.Error(e, $"QuiverTwitterFollowersDataDownloader.HttpRequester(): Error at HttpRequester. (retry {retries}/{_maxRetries})");
                     Thread.Sleep(1000);
                 }
             }

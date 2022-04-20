@@ -13,15 +13,15 @@
 
 from AlgorithmImports import *
 
-class QuiverQuantTwitterFollowersAlgorithm(QCAlgorithm):
+class QuiverTwitterFollowersAlgorithm(QCAlgorithm):
     def Initialize(self):
         self.SetStartDate(2020, 10, 07)  #Set Start Date
         self.SetEndDate(2020, 10, 11)    #Set End Date
         self.equity_symbol = self.AddEquity("AAPL", Resolution.Daily).Symbol
-        self.custom_data_symbol = self.AddData(QuiverQuantTwitterFollowers, self.equity_symbol).Symbol
+        self.custom_data_symbol = self.AddData(QuiverTwitterFollowers, self.equity_symbol).Symbol
 
     def OnData(self, slice):
-        data = slice.Get(QuiverQuantTwitterFollowers)
+        data = slice.Get(QuiverTwitterFollowers)
         if data:
             twitterFollowers = data[self.custom_data_symbol]
             self.Log(twitterFollowers.ToString())

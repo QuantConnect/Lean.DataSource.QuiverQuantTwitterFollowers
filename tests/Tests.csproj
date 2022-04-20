@@ -4,10 +4,10 @@
     <RootNamespace>QuantConnect.DataLibrary.Tests</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\QuiverQuantTwitterFollowersAlgorithm.cs" />
-    <Compile Include="..\QuiverQuantTwitterFollowersUniverseSelectionAlgorithm.cs" />
-    <None Include="..\QuiverQuantTwitterFollowersAlgorithm.py" />
-    <None Include="..\QuiverQuantTwitterFollowersUniverseSelectionAlgorithm.py" />
+    <Compile Include="..\QuiverTwitterFollowersAlgorithm.cs" />
+    <Compile Include="..\QuiverTwitterFollowersUniverseSelectionAlgorithm.cs" />
+    <None Include="..\QuiverTwitterFollowersAlgorithm.py" />
+    <None Include="..\QuiverTwitterFollowersUniverseSelectionAlgorithm.py" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="protobuf-net" Version="3.0.29" />
