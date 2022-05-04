@@ -44,7 +44,10 @@ class QuiverTwitterFollowersDataDownloader:
             while trial != 0:
                 try:
                     ticker_twitter = self.HttpRequester(f"historical/{VendorDataName}/{ticker}")
-                    sleep(0.15)
+                    if isinstance(ticker_twitter, Exception):
+                        raise ticker_twitter
+
+                    sleep(0.2)
 
                     if len(ticker_twitter) == 0:
                         print(f'No data for: {ticker}')
@@ -72,13 +75,18 @@ class QuiverTwitterFollowersDataDownloader:
 
                 except Exception as e:
                     print(f'{e} - Failed to parse data for {ticker} - Retrying')
-                    sleep(1)
+                    sleep(30)
                     trial -= 1
 
     def HttpRequester(self, url):       
         base_url = 'https://api.quiverquant.com/beta'
         headers = { 'accept': 'application/json', 'Authorization': 'Token ' + self.clientKey }
-        return requests.get(f'{base_url}/{url}', headers=headers).json()
+        json = requests.get(f'{base_url}/{url}', headers=headers).json()
+        
+        if all([isinstance(x, dict) for x in json]):
+            return json
+        else:
+            return Exception('HTTP Request returned corrupt output.')
 
 
 if __name__ == "__main__":
