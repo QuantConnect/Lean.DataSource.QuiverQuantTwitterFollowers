@@ -43,26 +43,6 @@ namespace QuantConnect.DataLibrary.Tests
         }
 
         [Test]
-        public void ProtobufRoundTrip()
-        {
-            var expected = CreateNewInstance();
-            var type = expected.GetType();
-
-            RuntimeTypeModel.Default[typeof(BaseData)].AddSubType(2000, type);
-
-            using (var stream = new MemoryStream())
-            {
-                Serializer.Serialize(stream, expected);
-
-                stream.Position = 0;
-
-                var result = Serializer.Deserialize(type, stream);
-
-                AssertAreEqual(expected, result, filterByCustomAttributes: true);
-            }
-        }
-
-        [Test]
         public void Clone()
         {
             var expected = CreateNewInstance();

@@ -20,7 +20,6 @@ using System.Globalization;
 using System.IO;
 using Newtonsoft.Json;
 using NodaTime;
-using ProtoBuf;
 using QuantConnect.Data;
 using QuantConnect.Util;
 
@@ -29,7 +28,6 @@ namespace QuantConnect.DataSource
     /// <summary>
     /// Example custom data type
     /// </summary>
-    [ProtoContract(SkipConstructor = true)]
     public class QuiverTwitterFollowers : BaseData
     {
         private readonly TimeSpan _period = TimeSpan.FromDays(1);
@@ -62,7 +60,6 @@ namespace QuantConnect.DataSource
         /// Current time marker of this data packet.
         /// </summary>
         /// <remarks>All data is timeseries based.</remarks>
-        [ProtoMember(2)]
         [JsonProperty(PropertyName = "Date")]
         [JsonConverter(typeof(DateTimeJsonConverter), "yyyy-MM-dd")]
         public new DateTime Time { get; set; }
