@@ -32,39 +32,31 @@ namespace QuantConnect.DataSource
     [ProtoContract(SkipConstructor = true)]
     public class QuiverTwitterFollowers : BaseData
     {
+        private readonly TimeSpan _period = TimeSpan.FromDays(1);
+
         /// <summary>
         /// Number of followers of the company's Twitter page on the given date
         /// </summary>
-        [ProtoMember(12)]
         [JsonProperty(PropertyName = "Followers")]
         public int Followers { get; set; }
 
         /// <summary>
         /// Day-over-day change in company's follower count
         /// </summary>
-        [ProtoMember(13)]
         [JsonProperty(PropertyName = "pct_change_day")]
         public decimal DayPercentChange { get; set; }
 
         /// <summary>
         /// Week-over-week change in company's follower count
         /// </summary>
-        [ProtoMember(14)]
         [JsonProperty(PropertyName = "pct_change_week")]
         public decimal WeekPercentChange { get; set; }
 
         /// <summary>
         /// Month-over-month change in company's follower count
         /// </summary>
-        [ProtoMember(15)]
         [JsonProperty(PropertyName = "pct_change_month")]
         public decimal MonthPercentChange { get; set; }
-
-        /// <summary>
-        /// Time passed between the date of the data and the time the data became available to us
-        /// </summary>
-        [ProtoMember(16)]
-        public TimeSpan Period { get; set; } = TimeSpan.FromDays(1);
 
         /// <summary>
         /// Current time marker of this data packet.
@@ -78,7 +70,7 @@ namespace QuantConnect.DataSource
         /// <summary>
         /// Time the data became available
         /// </summary>
-        public override DateTime EndTime => Time + Period;
+        public override DateTime EndTime => Time + _period;
 
         /// <summary>
         /// Return the URL string source of the file. This will be converted to a stream
