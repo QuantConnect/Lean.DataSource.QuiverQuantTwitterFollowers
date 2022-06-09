@@ -28,7 +28,7 @@ namespace QuantConnect.DataSource
     /// </summary>
     public class QuiverTwitterFollowersUniverse : BaseData
     {
-        private readonly TimeSpan _period = TimeSpan.FromDays(1);
+        private static readonly TimeSpan _period = TimeSpan.FromDays(1);
 
         /// <summary>
         /// Number of followers of the company's Twitter page on the given date
