@@ -15,15 +15,21 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using QuantConnect.Data;
 using QuantConnect.Data.UniverseSelection;
 using QuantConnect.DataSource;
+using QuantConnect.Securities;
 
 namespace QuantConnect.Algorithm.CSharp
 {
     public class QuiverQuantTwitterFollowerUniverseAlgorithm : QCAlgorithm
     {
+        private readonly Symbol _symbol = QuantConnect.Symbol.Create("AAPL", SecurityType.Equity, Market.USA);
+        private Security _quiverTwitterFollowers;
+        private QuiverTwitterFollowersUniverse _datum;
+
         public override void Initialize()
         {
             // Data ADDED via universe selection is added with Daily resolution.
@@ -33,24 +39,35 @@ namespace QuantConnect.Algorithm.CSharp
             SetEndDate(2022, 2, 18);
             SetCash(100000);
 
-            // add a custom universe data source (defaults to usa-equity)
-            AddUniverse<QuiverTwitterFollowersUniverse>("QuiverTwitterFollowersUniverse", Resolution.Daily, data =>
-            {
-                foreach (var datum in data)
-                {
-                    Log($"{datum.Symbol},{datum.Followers},{datum.DayPercentChange},{datum.WeekPercentChange}");
-                }
+            // Add data for a single security
+            _quiverTwitterFollowers = AddData<QuiverTwitterFollowers>(_symbol);
 
-                // define our selection criteria
-                return from d in data 
-                    where d.Followers > 200000 && d.WeekPercentChange > 0m 
-                    select d.Symbol;
-            });
+            // add a custom universe data source
+            AddUniverse<QuiverTwitterFollowersUniverse>("QuiverTwitterFollowersUniverse", Resolution.Daily, UniverseSelectionMethod);
         }
-        
-        public override void OnSecuritiesChanged(SecurityChanges changes)
+
+        private IEnumerable<Symbol> UniverseSelectionMethod(IEnumerable<QuiverTwitterFollowersUniverse> data)
         {
-            Log(changes.ToString());
+            _datum = data.FirstOrDefault(datum => datum.Symbol == _symbol);
+
+            foreach (var datum in data)
+            {
+                Log($"{datum.Symbol},{datum.Followers},{datum.DayPercentChange},{datum.WeekPercentChange}");
+            }
+
+            return Universe.Unchanged;
+        }
+
+        public override void OnData(Slice slice)
+        {
+            // Sanity check for Universe Selection. The Value (Followers) should be the same.
+            // and if-condition should not be true
+            var single = _quiverTwitterFollowers?.GetLastData() as QuiverTwitterFollowers;
+            if (single?.EndTime == _datum?.EndTime && single?.Followers != _datum?.Followers)
+            {
+                var message = $"Data mismatch: Single: ({single?.EndTime} > {single?.Followers}) vs Universe ({_datum?.EndTime} > {_datum?.Followers})";
+                throw new Exception(message: message);
+            }
         }
     }
 }

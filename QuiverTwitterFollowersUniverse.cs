@@ -28,6 +28,8 @@ namespace QuantConnect.DataSource
     /// </summary>
     public class QuiverTwitterFollowersUniverse : BaseData
     {
+        private static readonly TimeSpan _period = TimeSpan.FromDays(1);
+
         /// <summary>
         /// Number of followers of the company's Twitter page on the given date
         /// </summary>
@@ -49,14 +51,9 @@ namespace QuantConnect.DataSource
         public decimal MonthPercentChange { get; set; }
 
         /// <summary>
-        /// Time passed between the date of the data and the time the data became available to us
-        /// </summary>
-        public TimeSpan Period { get; set; } = TimeSpan.FromDays(1);
-
-        /// <summary>
         /// Time the data became available
         /// </summary>
-        public override DateTime EndTime => Time + Period;
+        public override DateTime EndTime => Time + _period;
 
         /// <summary>
         /// Return the URL string source of the file. This will be converted to a stream
@@ -101,7 +98,7 @@ namespace QuantConnect.DataSource
                 MonthPercentChange = decimal.Parse(csv[5], NumberStyles.Any, CultureInfo.InvariantCulture),
 
                 Symbol = new Symbol(SecurityIdentifier.Parse(csv[0]), csv[1]),
-                Time = date - Period,
+                Time = date,
                 Value = followers
             };
         }
