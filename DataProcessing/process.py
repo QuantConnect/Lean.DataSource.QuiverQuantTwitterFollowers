@@ -80,8 +80,9 @@ class QuiverTwitterFollowersDataDownloader:
 
     def HttpRequester(self, url):       
         base_url = 'https://api.quiverquant.com/beta'
-        headers = { 'accept': 'application/json', 'Authorization': 'Token ' + self.clientKey }
-        json = requests.get(f'{base_url}/{url}', headers=headers).json()
+        headers = { 'accept': 'application/json', 'Authorization': 'Token ' + self.clientKey , 'Connection': 'close'}
+        with requests.Session() as session:
+            json = session.get(f'{base_url}/{url}', headers=headers).json()
         
         if all([isinstance(x, dict) for x in json]):
             return json
