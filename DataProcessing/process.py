@@ -73,7 +73,7 @@ class QuiverTwitterFollowersDataDownloader:
                     print(f'Finished processing {ticker}')
                     break                  
 
-                except Exception as e:
+                except BaseException as e:
                     print(f'{e} - Failed to parse data for {ticker} - Retrying')
                     sleep(30)
                     trial -= 1
