@@ -41,7 +41,7 @@ namespace QuantConnect.DataSource
         /// <summary>
         /// Day-over-day change in company's follower count
         /// </summary>
-        [JsonProperty(PropertyName = "pct_change_day")]
+        [JsonProperty(PropertyName = "pct_change_daily")]
         public decimal DayPercentChange { get; set; }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace QuantConnect.DataSource
         /// <summary>
         /// Month-over-month change in company's follower count
         /// </summary>
-        [JsonProperty(PropertyName = "pct_change_month")]
+        [JsonProperty(PropertyName = "pct_change")]
         public decimal MonthPercentChange { get; set; }
 
         /// <summary>

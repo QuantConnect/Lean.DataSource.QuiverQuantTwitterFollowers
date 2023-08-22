@@ -150,19 +150,16 @@ namespace QuantConnect.DataProcessing
                                     {
                                         var dateTime = twitterDataPoint.Time;
                                         var date = $"{dateTime:yyyyMMdd}";
-                                        var follower = twitterDataPoint.Followers;
-                                        var dayChange = twitterDataPoint.DayPercentChange;
-                                        var weekChange = twitterDataPoint.WeekPercentChange;
-                                        var monthChange = twitterDataPoint.MonthPercentChange;
+                                        var info = ParseInfo(twitterDataPoint);
 
-                                        csvContents.Add($"{date},{follower},{dayChange},{weekChange},{monthChange}");
+                                        csvContents.Add($"{date},{info}");
 
                                         if (!_canCreateUniverseFiles)
                                             continue;
                                         
                                         var sid = SecurityIdentifier.GenerateEquity(ticker, Market.USA, true, mapFileProvider, dateTime);
 
-                                        var universeCsvContents = $"{sid},{ticker},{follower},{dayChange},{weekChange},{monthChange}";
+                                        var universeCsvContents = $"{sid},{ticker},{info}";
 
                                         var queue = _tempData.GetOrAdd(date, new ConcurrentQueue<string>()); 
                                         queue.Enqueue(universeCsvContents);
@@ -218,6 +215,15 @@ namespace QuantConnect.DataProcessing
 
             Log.Trace($"QuiverTwitterFollowersDataDownloader.Run(): Finished in {stopwatch.Elapsed.ToStringInvariant(null)}");
             return true;
+        }
+
+        public static string ParseInfo(QuiverTwitterFollowers twitterDataPoint)
+        {
+            var follower = twitterDataPoint.Followers;
+            var dayChange = twitterDataPoint.DayPercentChange;
+            var weekChange = twitterDataPoint.WeekPercentChange;
+            var monthChange = twitterDataPoint.MonthPercentChange;
+            return $"{follower},{dayChange},{weekChange},{monthChange}";
         }
 
         /// <summary>

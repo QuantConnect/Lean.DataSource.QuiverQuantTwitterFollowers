@@ -58,7 +58,7 @@ class QuiverTwitterFollowersDataDownloader:
                     for row in sorted(ticker_twitter, key=lambda x: x['Date']):
                         date_time = datetime.strptime(row['Date'], '%Y-%m-%d')
                         date = date_time.strftime('%Y%m%d') # 2020-05-08
-                        info = f"{row['Followers']},{row['pct_change_day']},{row['pct_change_week']},{row['pct_change_month']}"
+                        info = self.ParseJson(row)
 
                         lines.append(','.join([date, info]))
                 
@@ -77,6 +77,17 @@ class QuiverTwitterFollowersDataDownloader:
                     print(f'{e} - Failed to parse data for {ticker} - Retrying')
                     sleep(30)
                     trial -= 1
+                    
+    def ParseJson(self, entry):
+        pct_change_daily = self.ParseValue(entry['pct_change_daily'])
+        pct_change_week = self.ParseValue(entry['pct_change_week'])
+        pct_change_month = self.ParseValue(entry['pct_change'])
+        return f"{entry['Followers']},{pct_change_daily},{pct_change_week},{pct_change_month}"
+                    
+    def ParseValue(self, property):
+        if property and str(property).lower() != "nan":
+            return property
+        return ""
 
     def HttpRequester(self, url):       
         base_url = 'https://api.quiverquant.com/beta'
