@@ -23,6 +23,7 @@ using Newtonsoft.Json;
 using NodaTime;
 using NUnit.Framework;
 using QuantConnect.Data;
+using QuantConnect.DataProcessing;
 using QuantConnect.DataSource;
 using QuantConnect.Data.Market;
 
@@ -31,6 +32,29 @@ namespace QuantConnect.DataLibrary.Tests
     [TestFixture]
     public class QuiverTwitterFollowersTests
     {
+        private readonly JsonSerializerSettings _jsonSerializerSettings = new()
+        {
+            DateTimeZoneHandling = DateTimeZoneHandling.Utc
+        };
+
+        [Test]
+        public void DeserializeObject()
+        {
+            var data = @"{
+                ""Date"": ""2020-01-01"",
+                ""Follower"": 1000,
+                ""pct_change_daily"": 5,
+                ""pct_change_week"": 100,
+                ""pct_change"": 10000,
+            }";
+            var twitterData = JsonConvert.DeserializeObject<QuiverTwitterFollowers>(data,
+                                _jsonSerializerSettings);
+            var result = QuiverTwitterFollowersDataDownloader.ParseInfo(twitterData);
+            var expected = CreateNewInstance();
+            
+            AssertAreEqual(expected, result);
+        }
+
         [Test]
         public void JsonRoundTrip()
         {
