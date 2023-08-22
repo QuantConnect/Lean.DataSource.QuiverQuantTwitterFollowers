@@ -42,19 +42,19 @@ namespace QuantConnect.DataSource
         /// Day-over-day change in company's follower count
         /// </summary>
         [JsonProperty(PropertyName = "pct_change_daily")]
-        public decimal DayPercentChange { get; set; }
+        public decimal? DayPercentChange { get; set; }
 
         /// <summary>
         /// Week-over-week change in company's follower count
         /// </summary>
         [JsonProperty(PropertyName = "pct_change_week")]
-        public decimal WeekPercentChange { get; set; }
+        public decimal? WeekPercentChange { get; set; }
 
         /// <summary>
         /// Month-over-month change in company's follower count
         /// </summary>
         [JsonProperty(PropertyName = "pct_change")]
-        public decimal MonthPercentChange { get; set; }
+        public decimal? MonthPercentChange { get; set; }
 
         /// <summary>
         /// Current time marker of this data packet.
@@ -110,9 +110,9 @@ namespace QuantConnect.DataSource
                 Value = followers,
  
                 Followers = followers,
-                DayPercentChange = decimal.Parse(csv[2], NumberStyles.Any, CultureInfo.InvariantCulture),
-                WeekPercentChange = decimal.Parse(csv[3], NumberStyles.Any, CultureInfo.InvariantCulture),
-                MonthPercentChange = decimal.Parse(csv[4], NumberStyles.Any, CultureInfo.InvariantCulture)
+                DayPercentChange = csv[2].IfNotNullOrEmpty<decimal?>(s => decimal.Parse(s, NumberStyles.Any, CultureInfo.InvariantCulture)),
+                WeekPercentChange = csv[3].IfNotNullOrEmpty<decimal?>(s => decimal.Parse(s, NumberStyles.Any, CultureInfo.InvariantCulture)),
+                MonthPercentChange = csv[4].IfNotNullOrEmpty<decimal?>(s => decimal.Parse(s, NumberStyles.Any, CultureInfo.InvariantCulture))
             };
         }
 

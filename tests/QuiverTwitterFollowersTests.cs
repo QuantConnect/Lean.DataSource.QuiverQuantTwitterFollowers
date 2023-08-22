@@ -45,7 +45,7 @@ namespace QuantConnect.DataLibrary.Tests
                 ""Follower"": 1000,
                 ""pct_change_daily"": 5,
                 ""pct_change_week"": 100,
-                ""pct_change"": 10000,
+                ""pct_change"": 10000
             }";
             var twitterData = JsonConvert.DeserializeObject<QuiverTwitterFollowers>(data,
                                 _jsonSerializerSettings);
