@@ -15,10 +15,7 @@
 */
 
 using System;
-using ProtoBuf;
-using System.IO;
 using System.Linq;
-using ProtoBuf.Meta;
 using Newtonsoft.Json;
 using NodaTime;
 using NUnit.Framework;
@@ -60,6 +57,21 @@ namespace QuantConnect.DataLibrary.Tests
             Assert.DoesNotThrow(() => instance.Reader(config, "20201104,1093260,9.14696e-05,-0.0254220704,-0.1202292029", DateTime.Today, false));
         }
 
+        [Test]
+        public void ReaderNaNTest()
+        {
+            var factory = new QuiverTwitterFollowers();
+            var line = "20201104,1093260,,,";
+
+            var symbol = Symbol.Create("SPY", SecurityType.Base, Market.USA);
+            var config = new SubscriptionDataConfig(typeof(TradeBar), symbol, Resolution.Daily, DateTimeZone.Utc, DateTimeZone.Utc, false, false, false); 
+            var date = new DateTime(2020, 11, 4);
+            var data = (QuiverTwitterFollowers)factory.Reader(config, line, date, false);
+            Assert.IsNull(data.DayPercentChange);
+            Assert.IsNull(data.WeekPercentChange);
+            Assert.IsNull(data.MonthPercentChange);
+        }
+
         private void AssertAreEqual(object expected, object result, bool filterByCustomAttributes = false)
         {
             foreach (var propertyInfo in expected.GetType().GetProperties())
@@ -76,7 +88,7 @@ namespace QuantConnect.DataLibrary.Tests
             }
         }
 
-        private BaseData CreateNewInstance()
+        internal static BaseData CreateNewInstance()
         {
             return new QuiverTwitterFollowers
             {

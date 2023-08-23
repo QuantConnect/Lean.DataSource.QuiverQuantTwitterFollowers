@@ -38,17 +38,17 @@ namespace QuantConnect.DataSource
         /// <summary>
         /// Day-over-day change in company's follower count
         /// </summary>
-        public decimal DayPercentChange { get; set; }
+        public decimal? DayPercentChange { get; set; }
 
         /// <summary>
         /// Week-over-week change in company's follower count
         /// </summary>
-        public decimal WeekPercentChange { get; set; }
+        public decimal? WeekPercentChange { get; set; }
 
         /// <summary>
         /// Month-over-month change in company's follower count
         /// </summary>
-        public decimal MonthPercentChange { get; set; }
+        public decimal? MonthPercentChange { get; set; }
 
         /// <summary>
         /// Time the data became available
@@ -93,9 +93,9 @@ namespace QuantConnect.DataSource
             return new QuiverTwitterFollowersUniverse
             {
                 Followers = followers,
-                DayPercentChange = decimal.Parse(csv[3], NumberStyles.Any, CultureInfo.InvariantCulture),
-                WeekPercentChange = decimal.Parse(csv[4], NumberStyles.Any, CultureInfo.InvariantCulture),
-                MonthPercentChange = decimal.Parse(csv[5], NumberStyles.Any, CultureInfo.InvariantCulture),
+                DayPercentChange = csv[3].IfNotNullOrEmpty<decimal?>(s => decimal.Parse(s, NumberStyles.Any, CultureInfo.InvariantCulture)),
+                WeekPercentChange = csv[4].IfNotNullOrEmpty<decimal?>(s => decimal.Parse(s, NumberStyles.Any, CultureInfo.InvariantCulture)),
+                MonthPercentChange = csv[5].IfNotNullOrEmpty<decimal?>(s => decimal.Parse(s, NumberStyles.Any, CultureInfo.InvariantCulture)),
 
                 Symbol = new Symbol(SecurityIdentifier.Parse(csv[0]), csv[1]),
                 Time = date,

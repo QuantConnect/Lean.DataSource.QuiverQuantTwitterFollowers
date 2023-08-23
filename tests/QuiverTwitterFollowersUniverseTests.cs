@@ -15,17 +15,12 @@
 */
 
 using System;
-using ProtoBuf;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using ProtoBuf.Meta;
 using Newtonsoft.Json;
-using NodaTime;
 using NUnit.Framework;
 using QuantConnect.Data;
 using QuantConnect.DataSource;
-using QuantConnect.Data.Market;
 
 namespace QuantConnect.DataLibrary.Tests
 {
@@ -54,6 +49,19 @@ namespace QuantConnect.DataLibrary.Tests
             var result = new List<Symbol> {Symbol.Create("HWM", SecurityType.Equity, Market.USA)};
 
             AssertAreEqual(expected, result);
+        }
+
+        [Test]
+        public void ReaderNaNTest()
+        {
+            var factory = new QuiverTwitterFollowersUniverse();
+            var line = "A RPTMYV3VC57P,A,1093260,,,";
+
+            var date = DateTime.Today;
+            var data = (QuiverTwitterFollowersUniverse)factory.Reader(null, line, date, false);
+            Assert.IsNull(data.DayPercentChange);
+            Assert.IsNull(data.WeekPercentChange);
+            Assert.IsNull(data.MonthPercentChange);
         }
 
         private void AssertAreEqual(object expected, object result, bool filterByCustomAttributes = false)
