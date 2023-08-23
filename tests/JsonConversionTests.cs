@@ -1,4 +1,4 @@
-﻿/*
+/*
  * QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals.
  * Lean Algorithmic Trading Engine v2.0. Copyright 2014 QuantConnect Corporation.
  *
@@ -14,47 +14,63 @@
  *
 */
 
-using System;
 using System.Linq;
 using Newtonsoft.Json;
-using NodaTime;
 using NUnit.Framework;
-using QuantConnect.Data;
+using QuantConnect.DataProcessing;
 using QuantConnect.DataSource;
-using QuantConnect.Data.Market;
 
 namespace QuantConnect.DataLibrary.Tests
 {
     [TestFixture]
-    public class QuiverTwitterFollowersTests
+    public class JsonConversionTests
     {
-        [Test]
-        public void JsonRoundTrip()
+        private readonly JsonSerializerSettings _jsonSerializerSettings = new()
         {
-            var expected = CreateNewInstance();
-            var type = expected.GetType();
-            var serialized = JsonConvert.SerializeObject(expected);
-            var result = JsonConvert.DeserializeObject(serialized, type);
+            DateTimeZoneHandling = DateTimeZoneHandling.Utc
+        };
 
+        [Test]
+        public void DeserializeObject()
+        {
+            var content = @"{
+                ""Date"": ""2020-01-01"",
+                ""Follower"": 1000,
+                ""pct_change_daily"": 5,
+                ""pct_change_week"": 100,
+                ""pct_change"": 10000
+            }";
+            var data = JsonConvert.DeserializeObject<QuiverTwitterFollowers>(content,
+                                _jsonSerializerSettings);
+            var result = QuiverTwitterFollowersDataDownloader.ParseInfo(data);
+            var expected = QuiverTwitterFollowersTests.CreateNewInstance();
+            
             AssertAreEqual(expected, result);
         }
 
         [Test]
-        public void Clone()
+        public void DeserializeNaN()
         {
-            var expected = CreateNewInstance();
-            var result = expected.Clone();
+            _jsonSerializerSettings.Converters.Add(new NoNanRealConverter());
 
+            var content = @"{
+                ""Date"": ""2020-01-01"",
+                ""Follower"": 1000,
+                ""pct_change_daily"": NaN,
+                ""pct_change_week"": NaN,
+                ""pct_change"": NaN
+            }";
+            var data = JsonConvert.DeserializeObject<QuiverTwitterFollowers>(content,
+                                _jsonSerializerSettings);
+
+            Assert.IsNull(data.DayPercentChange);
+            Assert.IsNull(data.WeekPercentChange);
+            Assert.IsNull(data.MonthPercentChange);
+
+            var result = QuiverTwitterFollowersDataDownloader.ParseInfo(data);
+            var expected = $"1000,,,";
+            
             AssertAreEqual(expected, result);
-        }
-
-        [Test]
-        public void ParseFloatNumber()
-        {
-            var instance = CreateNewInstance();
-            var symbol = Symbol.Create("SPY", SecurityType.Base, Market.USA);
-            var config = new SubscriptionDataConfig(typeof(TradeBar), symbol, Resolution.Daily, DateTimeZone.Utc, DateTimeZone.Utc, false, false, false); 
-            Assert.DoesNotThrow(() => instance.Reader(config, "20201104,1093260,9.14696e-05,-0.0254220704,-0.1202292029", DateTime.Today, false));
         }
 
         private void AssertAreEqual(object expected, object result, bool filterByCustomAttributes = false)
@@ -71,21 +87,6 @@ namespace QuantConnect.DataLibrary.Tests
             {
                 Assert.AreEqual(fieldInfo.GetValue(expected), fieldInfo.GetValue(result));
             }
-        }
-
-        internal static BaseData CreateNewInstance()
-        {
-            return new QuiverTwitterFollowers
-            {
-                Value = 1000,
-                Followers = 1000,
-                DayPercentChange = 5m,
-                WeekPercentChange = 100m,
-                MonthPercentChange = 10000m,
-
-                Symbol = Symbol.Empty,
-                Time = DateTime.Today
-            };
         }
     }
 }

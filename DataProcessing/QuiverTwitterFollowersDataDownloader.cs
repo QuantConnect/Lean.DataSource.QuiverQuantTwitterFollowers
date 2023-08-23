@@ -96,6 +96,8 @@ namespace QuantConnect.DataProcessing
 
             var mapFileProvider = new LocalZipMapFileProvider();
             mapFileProvider.Initialize(new DefaultDataProvider());
+            
+            _jsonSerializerSettings.Converters.Add(new NoNanRealConverter());
 
             try
             {
@@ -390,6 +392,49 @@ namespace QuantConnect.DataProcessing
         public void Dispose()
         {
             _indexGate?.Dispose();
+        }
+    }
+
+    public class NoNanRealConverter : JsonConverter
+    {
+        public override bool CanWrite => false;
+        
+        public override bool CanConvert(Type objectType)
+        {
+            var type = Nullable.GetUnderlyingType(objectType) ?? objectType;
+            return new[] { typeof(float), typeof(double), typeof(decimal) }.Contains(type);
+        }
+
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+        {
+            var nullableBase = Nullable.GetUnderlyingType(objectType);
+            var type = nullableBase ?? objectType;
+            if (nullableBase != null && reader.TokenType == JsonToken.Null)
+                return null;
+            
+            if (type == typeof(double))
+            {
+                var value = Convert.ToDouble(reader.Value);
+                return Double.IsNaN(value) ? null : value;
+            }
+            else if (type == typeof(float))
+            {
+                var value = Convert.ToSingle(reader.Value);
+                return Single.IsNaN(value) ? null : value;
+            }
+            try
+            {
+                return Convert.ToDecimal(reader.Value);
+            }
+            catch (OverflowException e)
+            {
+                return null;
+            }
+        }
+
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
         }
     }
 }
