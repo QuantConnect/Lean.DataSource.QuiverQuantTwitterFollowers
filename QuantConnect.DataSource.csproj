@@ -20,8 +20,6 @@
     <Compile Remove="DataProcessing\**" />
     <EmbeddedResource Remove="DataProcessing\**" />
     <None Remove="DataProcessing\**" />
-    <Compile Remove="QuiverQuantTwitterFollowers.cs" />
-    <Compile Remove="QuiverQuantTwitterFollowersUniverse.cs" />
     <Compile Remove="QuiverTwitterFollowersAlgorithm.cs" />
     <Compile Remove="QuiverTwitterFollowersUniverseSelectionAlgorithm.cs" />
     <None Remove="QuiverTwitterFollowersAlgorithm.py" />
